@@ -283,6 +283,12 @@
 
 - (void)installWithToolAndRelaunch:(BOOL)relaunch
 {
+	// Perhaps a poor assumption but: if we're not relaunching, we assume we shouldn't be showing any UI either. Because non-relaunching installations are kicked off without any user interaction, we shouldn't be interrupting them.
+	[self installWithToolAndRelaunch:relaunch displayingUserInterface:relaunch];
+}
+
+- (void)installWithToolAndRelaunch:(BOOL)relaunch displayingUserInterface:(BOOL)showUI
+{
 #if !ENDANGER_USERS_WITH_INSECURE_UPDATES
     if (![self validateUpdateDownloadedToPath:downloadPath extractedToPath:tempDir DSASignature:[updateItem DSASignature] publicDSAKey:[host publicDSAKey]])
     {
@@ -291,12 +297,6 @@
 	}
 #endif
     
-	// Perhaps a poor assumption but: if we're not relaunching, we assume we shouldn't be showing any UI either. Because non-relaunching installations are kicked off without any user interaction, we shouldn't be interrupting them.
-	[self installWithToolAndRelaunch:relaunch displayingUserInterface:relaunch];
-}
-
-- (void)installWithToolAndRelaunch:(BOOL)relaunch displayingUserInterface:(BOOL)showUI
-{
     if (![updater mayUpdateAndRestart])
     {
         [self abortUpdate];
